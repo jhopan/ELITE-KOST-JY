@@ -1,0 +1,113 @@
+-- --------------------------------------------------------
+-- Host:                         127.0.0.1
+-- Versi server:                 10.4.32-MariaDB - mariadb.org binary distribution
+-- OS Server:                    Win64
+-- HeidiSQL Versi:               12.10.0.7000
+-- --------------------------------------------------------
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+
+-- Membuang struktur basisdata untuk kost_elite_jy_db
+CREATE DATABASE IF NOT EXISTS `kost_elite_jy_db` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
+USE `kost_elite_jy_db`;
+
+-- membuang struktur untuk table kost_elite_jy_db.tbl_admin
+CREATE TABLE IF NOT EXISTS `tbl_admin` (
+  `id_admin` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `nama_lengkap` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id_admin`),
+  UNIQUE KEY `username` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Membuang data untuk tabel kost_elite_jy_db.tbl_admin: ~2 rows (lebih kurang)
+INSERT INTO `tbl_admin` (`id_admin`, `username`, `password`, `nama_lengkap`) VALUES
+	(1, 'admin', '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', 'Administrator Utama'),
+	(2, 'jhopan', '45bfade3888718cb75befa0cc08b63ed2d0a3973de2e60f8d059e6a3f8c44aae', 'jho');
+
+-- membuang struktur untuk table kost_elite_jy_db.tbl_akun_penghuni
+CREATE TABLE IF NOT EXISTS `tbl_akun_penghuni` (
+  `id_akun` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `id_penghuni` int(11) NOT NULL,
+  PRIMARY KEY (`id_akun`),
+  UNIQUE KEY `username` (`username`),
+  KEY `id_penghuni` (`id_penghuni`),
+  CONSTRAINT `fk_akun_penghuni_id` FOREIGN KEY (`id_penghuni`) REFERENCES `tbl_penghuni` (`id_penghuni`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Membuang data untuk tabel kost_elite_jy_db.tbl_akun_penghuni: ~2 rows (lebih kurang)
+INSERT INTO `tbl_akun_penghuni` (`id_akun`, `username`, `password`, `id_penghuni`) VALUES
+	(3, 'jho', 'c842b08a8a3b3b4cb7b1dc939c274b62ffa67a3bd5128cf7959bb167adefb771', 2),
+	(4, 'jho2345', '60e359fc4b9ebd747f89feedaf07c510899c71ba709c8e8c52915830bc779281', 5);
+
+-- membuang struktur untuk table kost_elite_jy_db.tbl_kamar
+CREATE TABLE IF NOT EXISTS `tbl_kamar` (
+  `nomor_kamar` varchar(10) NOT NULL,
+  `tipe` varchar(50) DEFAULT 'Standard',
+  `harga` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `status` enum('Tersedia','Terisi') NOT NULL DEFAULT 'Tersedia',
+  PRIMARY KEY (`nomor_kamar`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Membuang data untuk tabel kost_elite_jy_db.tbl_kamar: ~4 rows (lebih kurang)
+INSERT INTO `tbl_kamar` (`nomor_kamar`, `tipe`, `harga`, `status`) VALUES
+	('101', 'AC + KM Dalam', 1500000.00, 'Tersedia'),
+	('102', 'AC + KM Dalam', 1500000.00, 'Terisi'),
+	('201', 'Non-AC', 900000.00, 'Terisi'),
+	('222', 'AC + KM Dalam', 500000.00, 'Tersedia');
+
+-- membuang struktur untuk table kost_elite_jy_db.tbl_pembayaran
+CREATE TABLE IF NOT EXISTS `tbl_pembayaran` (
+  `id_pembayaran` int(11) NOT NULL AUTO_INCREMENT,
+  `id_penghuni` int(11) NOT NULL,
+  `nama_penghuni` varchar(100) NOT NULL,
+  `nomor_kamar` varchar(10) NOT NULL,
+  `bulan_bayar` varchar(25) NOT NULL,
+  `jumlah_bayar` decimal(10,2) NOT NULL,
+  `tanggal_bayar` date NOT NULL,
+  `keterangan` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id_pembayaran`),
+  KEY `id_penghuni` (`id_penghuni`),
+  CONSTRAINT `fk_pembayaran_ke_penghuni_id` FOREIGN KEY (`id_penghuni`) REFERENCES `tbl_penghuni` (`id_penghuni`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Membuang data untuk tabel kost_elite_jy_db.tbl_pembayaran: ~0 rows (lebih kurang)
+INSERT INTO `tbl_pembayaran` (`id_pembayaran`, `id_penghuni`, `nama_penghuni`, `nomor_kamar`, `bulan_bayar`, `jumlah_bayar`, `tanggal_bayar`, `keterangan`) VALUES
+	(1, 2, 'Jhosua', '102', 'Juni 2025', 1500000.00, '2025-06-15', 'Lunas');
+
+-- membuang struktur untuk table kost_elite_jy_db.tbl_penghuni
+CREATE TABLE IF NOT EXISTS `tbl_penghuni` (
+  `id_penghuni` int(11) NOT NULL AUTO_INCREMENT,
+  `nama_penghuni` varchar(100) NOT NULL,
+  `no_telepon` varchar(20) DEFAULT NULL,
+  `alamat_asal` text DEFAULT NULL,
+  `tanggal_masuk` date NOT NULL,
+  `nomor_kamar` varchar(10) NOT NULL,
+  `status` enum('Aktif','Tidak Aktif') NOT NULL DEFAULT 'Aktif',
+  PRIMARY KEY (`id_penghuni`),
+  UNIQUE KEY `nomor_kamar` (`nomor_kamar`),
+  CONSTRAINT `fk_penghuni_kamar` FOREIGN KEY (`nomor_kamar`) REFERENCES `tbl_kamar` (`nomor_kamar`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Membuang data untuk tabel kost_elite_jy_db.tbl_penghuni: ~2 rows (lebih kurang)
+INSERT INTO `tbl_penghuni` (`id_penghuni`, `nama_penghuni`, `no_telepon`, `alamat_asal`, `tanggal_masuk`, `nomor_kamar`, `status`) VALUES
+	(2, 'Jhosua', '02555', NULL, '2025-06-15', '102', 'Aktif'),
+	(4, 'jho', '02585', 'kjj', '2025-06-30', '201', 'Aktif'),
+	(5, 'jhoh', '45', 'hjhjh', '2025-06-30', '101', 'Aktif');
+
+/*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
+/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
+/*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;
