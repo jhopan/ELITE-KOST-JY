@@ -195,6 +195,7 @@ Partial Class FormKamar
         Me.Controls.Add(Me.dgvKamar)
         Me.MaximizeBox = False
         Me.Name = "FormKamar"
+        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "Kamar - Kost Elite JY"
         CType(Me.dgvKamar, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grpKamar.ResumeLayout(False)
